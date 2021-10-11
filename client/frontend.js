@@ -73,9 +73,10 @@ class Contacts {
   }
 
   /** Actions */
-  addContact(contact) {
+  async addContact(contact) {
     if (contact.name && contact.value) {
-      this.contacts = [...this._contacts, {...contact, id: Date.now()}];
+      const newContact = await Fetch.post(this.api, contact)
+      this.contacts = [...this._contacts, newContact];
     }
   }
   removeContact(id) {
