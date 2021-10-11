@@ -4,7 +4,7 @@ const { v4 } = require('uuid');
 
 const app = express();
 
-const CONTACTS = [
+let CONTACTS = [
   { id: '1', name: 'test', value: 'asdas45d55', isMark: true },
 ];
 
@@ -22,6 +22,12 @@ app.post('/api/contacts', (req, res) => {
   const contact = { ...req.body, id: v4(), isMark: false };
   CONTACTS.push(contact);
   res.status(201).json(contact);
+});
+
+// DELETE
+app.delete('/api/contacts/:id', (req, res) => {
+  CONTACTS = CONTACTS.filter(({ id }) => id !== req.params.id);
+  res.status(200).json(true);
 });
 
 app.use(express.static(path.resolve('client')));

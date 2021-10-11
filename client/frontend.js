@@ -1,9 +1,6 @@
 const upperFirstSymbol = (word) => word[0].toUpperCase() + word.slice(1);
 
 class Fetch {
-  static headers = {};
-  static body;
-
   /** Requests */
   static async get(url) {
     return await this._request(url, 'GET');
@@ -21,15 +18,18 @@ class Fetch {
   /** Other */
   static async _request(url, method = 'GET', data = null) {
     try {
+      const headers = {};
+      let body;
+
       if (data) {
-        this.headers['Content-Type'] = 'application/json';
-        this.body = JSON.stringify(data);
+        headers['Content-Type'] = 'application/json';
+        body = JSON.stringify(data);
       }
 
       const response = await fetch(url, {
         method,
-        headers: this.headers,
-        body: this.body,
+        headers,
+        body,
       });
 
       return await response.json();
@@ -79,8 +79,9 @@ class Contacts {
       this.contacts = [...this._contacts, newContact];
     }
   }
-  removeContact(id) {
-    this.contacts = this._contacts.filter(({ id: idContact }) => id !== idContact);
+  async removeContact(id) {
+    const isDeleted = await Fetch.delete(`${this.api}/${id}`);
+    if (isDeleted) this.contacts = this._contacts.filter(({ id: idContact }) => id !== idContact);
   }
   markContact(id) {
     this.contacts = this._contacts.map((contact) => {
@@ -127,13 +128,13 @@ class Contacts {
       switch (target.dataset.action) {
         case 'mark': {
           const id = target.closest('[id]').id;
-          this.markContact(+id);
+          this.markContact(id);
           return;
         }
 
         case 'remove': {
           const id = target.closest('[id]').id;
-          this.removeContact(+id);
+          this.removeContact(id);
           return;
         }
 
