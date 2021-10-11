@@ -27,7 +27,7 @@ app.post('/api/contacts', (req, res) => {
 // PUT
 app.put('/api/contacts/:id', (req, res) => {
   const index = CONTACTS.findIndex(({ id }) => id === req.body.id);
-  CONTACTS[index].isMark = !CONTACTS[index].isMark;
+  CONTACTS[index] = req.body;
 
   res.status(200).json(CONTACTS[index]);
 });
