@@ -83,11 +83,13 @@ class Contacts {
     const isDeleted = await Fetch.delete(`${this.api}/${id}`);
     if (isDeleted) this.contacts = this._contacts.filter(({ id: idContact }) => id !== idContact);
   }
-  markContact(id) {
-    this.contacts = this._contacts.map((contact) => {
-      if (id === contact.id) contact.isMark = !contact.isMark;
-      return contact;
-    });
+  async markContact(id) {
+    const newContacts = [...this._contacts];
+    const index = newContacts.findIndex(({ id: idContact }) => idContact === id);
+    newContacts[index].isMark = !newContacts[index].isMark;
+
+    await Fetch.put(`${this.api}/${id}`, { ...newContacts[index] });
+    this.contacts = newContacts;
   }
 
   /** Requests */
